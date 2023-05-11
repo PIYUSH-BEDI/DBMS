@@ -1,0 +1,156 @@
+RA2011050010042/RA2011050010042@v1-u2-w2.c0vm8jxyhl5s.us-east-2.rds.amazonaws.com:1521/orcl
+DD-MON-YY
+
+create table teacher(id int PRIMARY KEY,name char,gender char);
+<!> insert into teacher values('&id','&name','&gender');<!>
+<!>/<!>
+insert into teacher(id,name) values('1','Ramlata');
+insert into teacher values('2','Ramlata','F');
+delete from teacher where id = '1';
+alter table teacher add surname char;
+truncate table teacher; -> structure will exist
+drop table teacher; -> everything gets deleted
+RENAME TABLE teacher to students;
+DESC students; -> print table structure
+select * FROM students; -> print whole table
+<!>alter table teacher MODIFY salary varchar(10);<!>
+-----------------------------------------------------------------2
+select * from teacher where id = '2';
+update teacher set gender = 'male' where id = '2';
+-----------------------------------------------------------------3
+<!>create table manager(enumber number(2),ename char(15),salary number(5),commission number(4),annualsalary number(7),Hiredate date,designation char(10),deptno number(2),reporting char(10));<!>
+<!>insert into manager values(7369,'Dharsan',2500,500,30000,'30-June-81','clerk',10,'John');<!>
+update teacher set salary = '20000' where id = '2';
+update teacher set salary = salary *10;
+delete from teacher where salary < 50000;
+select name as "name" , salary*12  as "ANNUAL SALARY" FROM teacher;
+<!>select CONCAT (name,'',salary) as "name & salary" from teacher;<!>
+select name||' '||gender as concat from teacher;
+select name from teacher where work ='clerk';
+select * from teacher where birth < '15-Dec-2002';
+select name from teacher where id in (1,2);
+select name from teacher where work != 'clerk';
+select name from teacher where birth between "01-Dec-02" AND "01-Jan-03";
+select distinct work from teacher;
+select ename,designation from manager where reporting is NULL;
+select name from teacher where name like 'p%' or name like '%v';name start with p and end with v
+select ename from manager where ename like '_i%';i is the second character
+select Hiredate,ename,designation,deptno from manager order by Hiredate;asc
+select enumber,ename,designation,annualsalary from manager order by annualsalary desc;desc
+select ename,deptno,salary from manager order by deptno , salary desc;deptno-asc
+-----------------------------------------------------------------4
+CREATE TABLE Persons (ID int NOT NULL,LastName varchar(255) NOT NULL,FirstName varchar(255),Age int CHECK (Age&gt;=18));
+ALTER TABLE Persons MODIFY City DEFAULT 'Sandnes';
+CREATE TABLE EMP (  MANAGER_NAME VARCHAR(10) DEFAULT 'Mr.K. RAM');
+alter table department add salary int check (salary>10000 and salary<20000);
+ALTER TABLE EMP ADD CONSTRAINT CHK_SALARY_RANGE CHECK (SALARY BETWEEN 10000 AND 20000);
+ALTER TABLE EMP ADD CONSTRAINT FK_DEPTNO_DEPT FOREIGN KEY (DEPT_NO) REFERENCES DEPT(DEPT_NO);Add Foreign key constraint to the column DEPTNO of EMP table references
+DEPTNO of DEPT table.
+ALTER TABLE EMP ADD CONSTRAINT CHK_COMMISSION CHECK (COMMISSION < 0.1 * SALARY);Add Check constraint to the table EMP to restrict the values of commission.
+It has to be less than 10%.
+ALTER TABLE EMP DROP CONSTRAINT PK_EMP;Remove the primary key constraint on the EMP table.
+-----------------------------------------------------------------5
+GRANT SELECT, INSERT, UPDATE ON DEPT TO RA201100xxxxxxxx;
+DESC DEPT;
+REVOKE SELECT, INSERT, UPDATE ON DEPT FROM RA201100xxxxxxxx;
+COMMIT;
+SAVEPOINT update_over;
+ROLLBACK TO update_over;
+-----------------------------------------------------------------6
+SELECT COUNT(*) FROM emp;number of rows
+SELECT COUNT(DISTINCT job) FROM emp;Find number of designations available in EMP table.
+SELECT MAX(sal), MIN(sal), AVG(sal) FROM emp;
+SELECT job, COUNT(*) as num_employees FROM emp GROUP BY job ORDER BY num_employees DESC;List the jobs and number of employees in each job. The result should be in the descending order of the number of employees.
+SELECT job, SUM(sal) as total_salary, MAX(sal) as max_salary, MIN(sal) as min_salary, AVG(sal) as avg_salary FROM emp WHERE deptno = 20 GROUP BY job HAVING AVG(sal) > 1000;List the total salary, maximum and minimum salary and average salary of the employees jobwise, for department 20 and display only those rows having an average salary > 1000.
+SELECT job, SUM(sal) as total_salary FROM emp WHERE job != 'PRESIDENT' GROUP BY job HAVING SUM(sal) > 5000;List the job and total salary of employees jobwise, for jobs other than ‘PRESIDENT’ and display only those rows having total salary > 5000.
+-----------------------------------------------------------------8
+SELECT ENAME FROM EMP WHERE SAL > (SELECT SAL FROM EMP WHERE EMPNO = 7566);
+SELECT ENAME FROM EMP WHERE JOB = (SELECT JOB FROM EMP WHERE EMPNO = 7369) AND SAL > (SELECT SAL FROM EMP WHERE EMPNO = 7876);
+SELECT DEPTNO, MIN(SAL) FROM EMP GROUP BY DEPTNO HAVING MIN(SAL) > (SELECT MIN(SAL) FROM EMP WHERE DEPTNO = 20);List deptno & min(salary) departmentwise, only if min(sal) is greater than the min(sal) of deptno 20.
+SELECT EMPNO, ENAME, JOB FROM EMP WHERE JOB <> 'CLERK' AND SAL < ANY(SELECT SAL FROM EMP WHERE JOB = 'CLERK');List empno, ename, job of the employees whose job is not a ‘CLERK’ and whose salary is less than at least one of the salaries of the employees whose job is ‘CLERK’.
+SELECT EMPNO, ENAME, JOB FROM EMP WHERE SAL > (SELECT AVG(SAL) FROM EMP WHERE DEPTNO = EMP.DEPTNO);List empno, ename, job of the employees whose salary is greater than the average salary of each department.
+SELECT ENAME, JOB, SAL FROM EMP WHERE SAL IN (SELECT SAL FROM EMP WHERE ENAME IN ('SCOTT', 'WARD'));List ename, job, sal of the employees whose salary is equal to any one of the salary of the employee ‘SCOTT’ and ‘WARD’.
+SELECT ENAME, JOB FROM EMP WHERE DEPTNO = 10 AND JOB IN (SELECT JOB FROM EMP WHERE DEPTNO = 30);List ename, job of the employees who work in deptno 10 and his/her job is any one of the job in the department ‘SALES’.
+-----------------------------------------------------------------9
+
+
+-----------------------------------------------------------------10
+sqlplus
+set serveroutput on;
+edit addition
+close notepad
+@addition
+-----------------------------------------------------------------
+set serveroutput on;
+ DECLARE
+        celcius NUMBER;
+        fahrenheit NUMBER;
+BEGIN
+        celcius := &input_celcius;
+        fahrenheit := 9/5 * celcius + 32;
+        DBMS_OUTPUT.PUT_LINE (celcius ||' Celcius = '||fahrenheit|| ' Fahrenheit');
+     END;
+
+DECLARE
+    num NUMBER(3) := 2;
+    sum1 NUMBER(4) := 0;
+BEGIN
+    WHILE num <= 5 LOOP
+        dbms_output.Put_line(num);
+        sum1 := sum1 + num;
+        num := num + 2;
+    END LOOP;
+        dbms_output.Put_line('Sum of even numbers is ' || sum1);
+END;
+
+DECLARE
+    a NUMBER := 46;
+    b NUMBER := 67;
+    c NUMBER := 21;
+BEGIN
+    IF a > b
+       AND a > c THEN
+      dbms_output.Put_line('Greatest number is '
+                           ||a);
+    ELSIF b > a
+          AND b > c THEN
+      dbms_output.Put_line('Greatest number is '
+                           ||b);
+    ELSE
+      dbms_output.Put_line('Greatest number is '
+                           ||c);
+    END IF;
+END;
+
+DECLARE
+n1 NUMBER := &num1;
+BEGIN
+-- test if the number provided by the user is even
+IF MOD(n1,2) = 0 THEN
+DBMS_OUTPUT.PUT_LINE ('The number. '||n1||
+' is even number');
+ELSE
+DBMS_OUTPUT.PUT_LINE ('The number '||n1||' is odd number.');
+END IF;
+DBMS_OUTPUT.PUT_LINE ('Done Successfully');
+END;
+
+DECLARE
+  num NUMBER := &num;
+  factorial NUMBER := 1;
+BEGIN
+  FOR i IN 1..num LOOP
+     factorial := factorial * i;
+  END LOOP;
+  
+  DBMS_OUTPUT.PUT_LINE('Factorial of ' || num || ' is ' || factorial);
+END;
+
+-----------------------------------------------------------------
+
+
+
+
+
+
+
