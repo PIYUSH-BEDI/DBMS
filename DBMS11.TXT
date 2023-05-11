@@ -1,0 +1,172 @@
+SQL> set serveroutput on;
+SQL> CREATE OR REPLACE PROCEDURE greetings
+  2      AS
+  3      BEGIN
+  4         dbms_output.put_line('Hello World!');
+  5      END;
+  6     /
+
+Procedure created.
+
+SQL> EXECUTE GREETINGS
+Hello World!                                                                    
+
+PL/SQL procedure successfully completed.
+
+SQL> DECLARE
+  2           a number:=&a;
+  3           b number:=&b;
+  4           c number;
+  5        PROCEDURE findMin(x IN number, y IN number, z OUT number) IS
+  6        BEGIN
+  7          IF x < y THEN
+  8             z:= x;
+  9          ELSE
+ 10            z:= y;
+ 11         END IF;
+ 12       END;
+ 13       BEGIN
+ 14          findMin(a, b, c);
+ 15          dbms_output.put_line(' Minimum of (a,b) : ' || c);
+ 16       END;
+ 17       /
+Enter value for a: 5
+old   2:          a number:=&a;
+new   2:          a number:=5;
+Enter value for b: 3
+old   3:          b number:=&b;
+new   3:          b number:=3;
+Minimum of (a,b) : 3                                                            
+
+PL/SQL procedure successfully completed.
+
+SQL>  DECLARE
+  2             a number:=&a;
+  3          PROCEDURE cubeNum(x IN OUT number) IS
+  4          BEGIN
+  5             x:=x*x*x;
+  6          END;
+  7          BEGIN
+  8             cubeNum(a);
+  9         dbms_output.put_line(' cube of number: ' || a);
+ 10     END;
+ 11     /
+Enter value for a: 6
+old   2:            a number:=&a;
+new   2:            a number:=6;
+cube of number: 216                                                             
+
+PL/SQL procedure successfully completed.
+
+SQL> CREATE OR REPLACE PROCEDURE check_palindrome(p_str IN VARCHAR2) AS
+  2        v_reverse_str VARCHAR2(32767);
+  3      BEGIN
+  4        -- Reverse the input string
+  5        FOR i IN REVERSE 1..LENGTH(p_str)
+  6        LOOP
+  7          v_reverse_str := v_reverse_str || SUBSTR(p_str, i, 1);
+  8       END LOOP;
+  9  
+ 10       -- Check if the reversed string is equal to the original string
+ 11       IF v_reverse_str = p_str THEN
+ 12         DBMS_OUTPUT.PUT_LINE(p_str || ' is a palindrome');
+ 13       ELSE
+ 14         DBMS_OUTPUT.PUT_LINE(p_str || ' is not a palindrome');
+ 15       END IF;
+ 16     END;
+ 17    /
+
+Procedure created.
+
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> BEGIN
+  2  CHECK_PALINDRROME('RACECAR');
+  3  /
+CHECK_PALINDRROME('RACECAR');
+                            *
+ERROR at line 2:
+ORA-06550: line 2, column 29: 
+PLS-00103: Encountered the symbol "end-of-file" when expecting one of the 
+following: 
+( begin case declare end exception exit for goto if loop mod 
+null pragma raise return select update while with 
+<an identifier> <a double-quoted delimited-identifier> 
+<a bind variable> << continue close current delete fetch lock 
+insert open rollback savepoint set sql execute commit forall 
+merge pipe purge json_exists json_value json_query 
+json_object json_array 
+
+
+SQL> chech_palindrome("racecar");
+SP2-0734: unknown command beginning "chech_pali..." - rest of line ignored.
+SQL> check_palindrome("racecar");
+SP2-0734: unknown command beginning "check_pali..." - rest of line ignored.
+SQL> begin
+  2  check_palindrome("racecar");
+  3  /
+check_palindrome("racecar");
+                           *
+ERROR at line 2:
+ORA-06550: line 2, column 28: 
+PLS-00103: Encountered the symbol "end-of-file" when expecting one of the 
+following: 
+( begin case declare end exception exit for goto if loop mod 
+null pragma raise return select update while with 
+<an identifier> <a double-quoted delimited-identifier> 
+<a bind variable> << continue close current delete fetch lock 
+insert open rollback savepoint set sql execute commit forall 
+merge pipe purge json_exists json_value json_query 
+json_object json_array 
+
+
+SQL> BEGIN
+  2        check_palindrome('racecar');
+  3       check_palindrome('hello');
+  4      END;
+  5     /
+racecar is a palindrome                                                         
+hello is not a palindrome                                                       
+
+PL/SQL procedure successfully completed.
+
+SQL> CREATE OR REPLACE PROCEDURE delete_row(
+  2         table_name IN VARCHAR2,
+  3         key_column_name IN VARCHAR2,
+  4         key_value IN NUMBER
+  5     )
+  6      IS
+  7      BEGIN
+  8         -- Build and execute the DELETE statement
+  9         EXECUTE IMMEDIATE 'DELETE FROM ' || table_name || ' WHERE ' || key_column_name || ' = :1'
+ 10           USING key_value;
+ 11  
+ 12        DBMS_OUTPUT.PUT_LINE('Row with ' || key_column_name || ' = ' || key_value || ' deleted successfully.');
+ 13     END;
+ 14     /
+
+Procedure created.
+
+SQL> DECLARE
+  2        table_name VARCHAR2(100) := 'employees';
+  3         key_column_name VARCHAR2(100) := 'employee_id';
+  4         key_value NUMBER := 1001;
+  5      BEGIN
+  6         delete_row(table_name, key_column_name, key_value);
+  7      END;
+  8      /
+DECLARE
+*
+ERROR at line 1:
+ORA-00942: table or view does not exist 
+ORA-06512: at "RA2011033010131.DELETE_ROW", line 9 
+ORA-06512: at line 6 
+
+
+SQL> commit;
+
+Commit complete.
+
+SQL> spool off;
